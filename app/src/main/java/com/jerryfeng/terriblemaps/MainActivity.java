@@ -60,10 +60,15 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     private TextView mSearchAddress;
     private Button mMapsButton;
+    private Button mMockButton;
 
     private RelativeLayout root;
     private int backgroundFlashIndex = 0;
     private boolean isBackgroundFlashing;
+
+    private float mNorthDegree;
+    private double mockLat = 43.473073;
+    private double mockLng = -80.543648;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +105,22 @@ public class MainActivity extends Activity implements SensorEventListener {
                 }
             }
         });
+
+        mMockButton = (Button) findViewById(R.id.mock_button);
+        mMockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                double dN = Math.sin(Math.toRadians(mNorthDegree));
+                double dE = Math.cos(Math.toRadians(mNorthDegree));
+                mockLat += dN * 0.0001f;
+                mockLng += dE * 0.0001f;
+                mMockLocationManager.pushLocation(mockLat, mockLng);
+            }
+        });
     }
 
     private void establishLocationManager() {
-        //mMockLocationManager = new MockLocationProvider(LocationManager.GPS_PROVIDER, this);
+        mMockLocationManager = new MockLocationProvider(LocationManager.GPS_PROVIDER, this);
 
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -148,8 +165,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         };
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-        //mMockLocationManager.pushLocation(43.4730821, -80.544111);
+        mMockLocationManager.pushLocation(mockLat, mockLng);
     }
 
 
@@ -224,11 +240,11 @@ public class MainActivity extends Activity implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
 
         // get the angle around the z-axis rotated
-        float degree = Math.round(event.values[0]);
+        mNorthDegree = Math.round(event.values[0]);
 
-        mDebugHeading.setText("Heading: " + Float.toString(degree) + " degrees");
+        mDebugHeading.setText("Heading: " + Float.toString(mNorthDegree) + " degrees");
 
-        mCompass.setHeading(degree);
+        mCompass.setHeading(mNorthDegree);
     }
 
     @Override

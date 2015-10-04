@@ -106,7 +106,7 @@ public class MapsActivity extends FragmentActivity {
         String url = "https://maps.googleapis.com/maps/api/directions/json?origin=("
                 + mCurrentLocation.latitude + "," + mCurrentLocation.longitude + ")&destination=("
                 + mSelectedLocation.latitude + "," + mSelectedLocation.longitude
-                + ")&key=" + serverKey;
+                + ")&mode=walking&key=" + serverKey;
         StringRequest mStringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override

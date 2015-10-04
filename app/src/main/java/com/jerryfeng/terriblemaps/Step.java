@@ -69,7 +69,7 @@ public class Step {
         }
 
         for(int i=0;i<poly.size();i++){
-            Log.i("Location", "Point sent: Latitude: " + poly.get(i).latitude + " Longitude: " + poly.get(i).longitude);
+            Log.i("Parse waypoints", "Point sent: Latitude: " + poly.get(i).latitude + " Longitude: " + poly.get(i).longitude);
         }
         return poly;
     }
