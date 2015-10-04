@@ -132,7 +132,15 @@ public class MainActivity extends Activity implements SensorEventListener {
                 mDebugLon.setText(String.valueOf(location.getLongitude()));
 
                 if (mSteps != null && mSteps.size() > 0) {
-                    double dist = distance(location.getLatitude(), location.getLongitude(), mSteps.get(0).getEndLocation().latitude, mSteps.get(0).getEndLocation().longitude, "K");
+                    double lat = mSteps.get(0).getEndLocation().latitude;
+                    double lon = mSteps.get(0).getEndLocation().longitude;
+
+                    Location nextLoc = new Location("gmaps");
+                    nextLoc.setLatitude(lat);
+                    nextLoc.setLongitude(lon);
+
+                    double dist = location.distanceTo(nextLoc);
+
                     if (dist < 0.05) {
                         toggleBackgroundFlash(true);
 
