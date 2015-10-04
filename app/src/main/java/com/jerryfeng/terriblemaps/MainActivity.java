@@ -27,19 +27,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends Activity {
 
-    public static final String serverKey = "AIzaSyAyD0skqAcwz-z1BzwJz8S_6kAFHkBOI40";
     private static final int REQUEST_MAP_ACTIVITY = 10;
-
-    private JSONObject mResponseObject;
 
     private LocationManager mLocationManager;
     private MockLocationProvider mMockLocationManager;
 
     private Location mLocation;
     private LatLng mDestinationCoords;
+    private ArrayList<Step> mSteps;
 
     private TextView debugLat;
     private TextView debugLon;
@@ -51,51 +51,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mSteps = new ArrayList<>();
+
         initLayout();
         establishLocationManager();
 
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://maps.googleapis.com/maps/api/directions/json?origin=Waterloo&destination=Toronto&key="
-                + serverKey;
-        StringRequest mStringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("response", response);
-
-                        try {
-                            mResponseObject = new JSONObject(response);
-                            JSONArray mRoutesArray = mResponseObject.getJSONArray("routes");
-
-                            if (mRoutesArray != null && mRoutesArray.length() > 0) {
-                                JSONObject mRoute = mRoutesArray.getJSONObject(0);
-                                JSONArray mLegsArray = mRoute.getJSONArray("legs");
-
-                                if (mLegsArray != null && mLegsArray.length() > 0) {
-                                    JSONObject mLeg = mLegsArray.getJSONObject(0);
-                                    JSONArray mStepsArray = mLeg.getJSONArray("steps");
-
-                                    if (mStepsArray != null && mStepsArray.length() > 0) {
-                                        for (int i = 0; i < mStepsArray.length(); i++) {
-                                            JSONObject mStep = mStepsArray.getJSONObject(i);
-
-                                            Log.d("step", mStep.toString());
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("error response", error.getMessage());
-            }
-        });
-
-        queue.add(mStringRequest);
     }
 
     private void initLayout() {
@@ -107,17 +67,18 @@ public class MainActivity extends Activity {
         mMapsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-                intent.putExtra("latitude", mLocation.getLatitude());
-                intent.putExtra("longitude", mLocation.getLongitude());
-                startActivityForResult(intent, REQUEST_MAP_ACTIVITY);
+                if (mLocation != null) {
+                    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                    intent.putExtra("latitude", mLocation.getLatitude());
+                    intent.putExtra("longitude", mLocation.getLongitude());
+                    startActivityForResult(intent, REQUEST_MAP_ACTIVITY);
+                }
             }
         });
     }
 
     private void establishLocationManager() {
         mMockLocationManager = new MockLocationProvider(LocationManager.GPS_PROVIDER, this);
-        mMockLocationManager.pushLocation(-12.34, 23.45);
 
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -153,7 +114,11 @@ public class MainActivity extends Activity {
         };
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+        mMockLocationManager.pushLocation(44.0, -80.0);
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -163,7 +128,26 @@ public class MainActivity extends Activity {
             mSearchAddress.setText(data.getStringExtra("search_string"));
             mDestinationCoords = new LatLng(data.getDoubleExtra("latitude", 0f),
                     data.getDoubleExtra("longitude", 0f));
-            Log.d("lat-lng", mDestinationCoords.toString());
+
+            Log.d("destination lat-lng", mDestinationCoords.toString());
+
+            mSteps.clear();
+
+            try {
+                JSONArray stepsArray = new JSONArray(data.getStringExtra("steps"));
+
+                if (stepsArray.length() > 0) {
+                    for (int i = 0; i < stepsArray.length(); i++) {
+                        JSONObject mStep = stepsArray.getJSONObject(i);
+
+                        mSteps.add(new Step(mStep));
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Log.d("steps", mSteps.size() + "");
         }
     }
 
