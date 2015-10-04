@@ -118,8 +118,9 @@ public class MainActivity extends Activity implements SensorEventListener {
                     double dist = distance(location.getLatitude(), location.getLongitude(), mSteps.get(0).getEndLocation().latitude, mSteps.get(0).getEndLocation().longitude, "K");
                     if (dist < 0.01) {
                         toggleBackgroundFlash(true);
-                        mNumSteps.setText(String.valueOf(Math.round(dist) * 2));
                     }
+
+                    mNumSteps.setText(String.valueOf(Math.round(dist) * 2));
                 }
             }
 
