@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,16 +26,19 @@ import org.json.JSONObject;
 public class MainActivity extends Activity {
 
     public static final String serverKey = "AIzaSyAyD0skqAcwz-z1BzwJz8S_6kAFHkBOI40";
+    private JSONObject mResponseObject;
+
     private LocationManager mLocationManager;
     private Location mLocation;
-
-    private JSONObject mResponseObject;
+    private TextView debugLat;
+    private TextView debugLon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initLayout();
         establishLocationManager();
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -81,6 +85,11 @@ public class MainActivity extends Activity {
         queue.add(mStringRequest);
     }
 
+    private void initLayout() {
+        debugLat = (TextView) findViewById(R.id.debug_lat);
+        debugLon = (TextView) findViewById(R.id.debug_long);
+    }
+
     private void establishLocationManager() {
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -88,6 +97,8 @@ public class MainActivity extends Activity {
             @Override
             public void onLocationChanged(Location location) {
                 mLocation = location;
+                debugLat.setText(String.valueOf(location.getLatitude()));
+                debugLon.setText(String.valueOf(location.getLongitude()));
             }
 
             @Override
