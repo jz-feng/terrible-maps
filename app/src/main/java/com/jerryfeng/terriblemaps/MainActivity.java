@@ -17,12 +17,18 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class MainActivity extends Activity {
 
     public static final String serverKey = "AIzaSyAyD0skqAcwz-z1BzwJz8S_6kAFHkBOI40";
     private LocationManager mLocationManager;
     private Location mLocation;
+
+    private JSONObject mResponseObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +38,38 @@ public class MainActivity extends Activity {
         establishLocationManager();
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal&key="
+        String url = "https://maps.googleapis.com/maps/api/directions/json?origin=Waterloo&destination=Toronto&key="
                 + serverKey;
         StringRequest mStringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.d("response", response);
+
+                        try {
+                            mResponseObject = new JSONObject(response);
+                            JSONArray mRoutesArray = mResponseObject.getJSONArray("routes");
+
+                            if (mRoutesArray != null && mRoutesArray.length() > 0) {
+                                JSONObject mRoute = mRoutesArray.getJSONObject(0);
+                                JSONArray mLegsArray = mRoute.getJSONArray("legs");
+
+                                if (mLegsArray != null && mLegsArray.length() > 0) {
+                                    JSONObject mLeg = mLegsArray.getJSONObject(0);
+                                    JSONArray mStepsArray = mLeg.getJSONArray("steps");
+
+                                    if (mStepsArray != null && mStepsArray.length() > 0) {
+                                        for (int i = 0; i < mStepsArray.length(); i++) {
+                                            JSONObject mStep = mStepsArray.getJSONObject(i);
+
+                                            Log.d("step", mStep.toString());
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override
