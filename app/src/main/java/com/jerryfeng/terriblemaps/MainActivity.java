@@ -2,6 +2,7 @@ package com.jerryfeng.terriblemaps;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -15,27 +16,30 @@ import com.android.volley.toolbox.Volley;
 
 public class MainActivity extends Activity {
 
+    public static final String serverKey = "AIzaSyAyD0skqAcwz-z1BzwJz8S_6kAFHkBOI40";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "";
+        String url = "https://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal&key="
+                + serverKey;
         StringRequest mStringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
+                        Log.d("response", response);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                
+                Log.d("error response", error.getMessage());
             }
         });
 
-        //queue.add(mStringRequest);
+        queue.add(mStringRequest);
     }
 
     @Override
