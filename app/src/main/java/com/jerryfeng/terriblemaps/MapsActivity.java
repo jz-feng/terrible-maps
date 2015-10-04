@@ -44,7 +44,7 @@ public class MapsActivity extends FragmentActivity {
 
     private Marker mMarker;
     private LatLng mCurrentLocation;
-    private LatLng mSelectedLocation;
+    private LatLng mSelectedLocation = new LatLng(43.4725263,-80.5426904);
     private String mSearchString;
 
     @Override

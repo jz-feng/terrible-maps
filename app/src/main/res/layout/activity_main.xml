@@ -10,12 +10,27 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
-    <com.jerryfeng.terriblemaps.component.Signpost
-        android:id="@+id/sign_post"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true">
+
+        <com.jerryfeng.terriblemaps.component.Signpost
+            android:id="@+id/sign_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/steps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="34dp"
+            android:layout_centerHorizontal="true"
+            android:textSize="24sp"
+            android:textColor="#FFFFFF"
+            android:text="2000"/>
+    </RelativeLayout>
 
     <com.jerryfeng.terriblemaps.component.Compass
         android:id="@+id/compass"

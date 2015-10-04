@@ -54,6 +54,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     private TextView mDebugHeading;
     private TextView mDebugLat;
     private TextView mDebugLon;
+    private TextView mNumSteps;
 
     private Compass mCompass;
 
@@ -83,6 +84,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         mDebugLat = (TextView) findViewById(R.id.debug_lat);
         mDebugLon = (TextView) findViewById(R.id.debug_long);
         mCompass = (Compass) findViewById(R.id.compass);
+        mNumSteps = (TextView) findViewById(R.id.steps);
         mSearchAddress = (TextView) findViewById(R.id.search_address);
         mMapsButton = (Button) findViewById(R.id.maps_button);
         root = (RelativeLayout) findViewById(R.id.root_background);
@@ -101,7 +103,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     private void establishLocationManager() {
-        mMockLocationManager = new MockLocationProvider(LocationManager.GPS_PROVIDER, this);
+        //mMockLocationManager = new MockLocationProvider(LocationManager.GPS_PROVIDER, this);
 
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -111,6 +113,14 @@ public class MainActivity extends Activity implements SensorEventListener {
                 mLocation = location;
                 mDebugLat.setText(String.valueOf(location.getLatitude()));
                 mDebugLon.setText(String.valueOf(location.getLongitude()));
+
+                if (mSteps != null && mSteps.size() > 0) {
+                    double dist = distance(location.getLatitude(), location.getLongitude(), mSteps.get(0).getEndLocation().latitude, mSteps.get(0).getEndLocation().longitude, "K");
+                    if (dist < 0.01) {
+                        toggleBackgroundFlash(true);
+                        mNumSteps.setText(String.valueOf(Math.round(dist) * 2));
+                    }
+                }
             }
 
             @Override
@@ -138,7 +148,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-        mMockLocationManager.pushLocation(44.0, -80.0);
+        //mMockLocationManager.pushLocation(43.4730821, -80.544111);
     }
 
 
@@ -252,6 +262,36 @@ public class MainActivity extends Activity implements SensorEventListener {
         } else {
             isBackgroundFlashing = false;
         }
+    }
+
+    // The following code is from http://www.geodatasource.com/developers/java
+    private static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+        if (unit == "K") {
+            dist = dist * 1.609344;
+        } else if (unit == "N") {
+            dist = dist * 0.8684;
+        }
+
+        return (dist);
+    }
+
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+	/*::	This function converts decimal degrees to radians		    :*/
+	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+	/*::	This function converts radians to decimal degrees	        :*/
+	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    private static double rad2deg(double rad) {
+        return (rad * 180 / Math.PI);
     }
 
 }
