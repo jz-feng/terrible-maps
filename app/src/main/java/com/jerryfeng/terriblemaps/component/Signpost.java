@@ -14,28 +14,26 @@ import com.jerryfeng.terriblemaps.R;
 /**
  * Created by Kevin on 04/10/2015.
  */
-public class Compass extends ImageView {
+public class Signpost extends ImageView {
 
-    private float mCurrentDegree = 0f;
-
-    public Compass(Context context) {
+    public Signpost(Context context) {
         super(context);
         init();
     }
 
-    public Compass(Context context, AttributeSet attrs) {
+    public Signpost(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public Compass(Context context, AttributeSet attrs, int defStyleAttr) {
+    public Signpost(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.compass);
-        bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() * 40, bitmap.getHeight() * 40, false);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sign_post);
+        bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() * 10, bitmap.getHeight() * 10, false);
 
         this.setImageBitmap(bitmap);
     }
