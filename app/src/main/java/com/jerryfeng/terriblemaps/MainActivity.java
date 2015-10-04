@@ -5,6 +5,7 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -29,6 +30,8 @@ public class MainActivity extends Activity {
     private JSONObject mResponseObject;
 
     private LocationManager mLocationManager;
+    private MockLocationProvider mMockLocationManager;
+
     private Location mLocation;
     private TextView debugLat;
     private TextView debugLon;
@@ -91,6 +94,9 @@ public class MainActivity extends Activity {
     }
 
     private void establishLocationManager() {
+        mMockLocationManager = new MockLocationProvider(LocationManager.GPS_PROVIDER, this);
+        mMockLocationManager.pushLocation(-12.34, 23.45);
+
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         LocationListener locationListener = new LocationListener() {
@@ -103,7 +109,14 @@ public class MainActivity extends Activity {
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-
+                switch (status) {
+                    case LocationProvider.OUT_OF_SERVICE:
+                        break;
+                    case LocationProvider.AVAILABLE:
+                        break;
+                    case LocationProvider.TEMPORARILY_UNAVAILABLE:
+                        break;
+                }
             }
 
             @Override
