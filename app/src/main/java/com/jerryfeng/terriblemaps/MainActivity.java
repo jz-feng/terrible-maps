@@ -98,8 +98,6 @@ public class MainActivity extends Activity implements SensorEventListener {
                 }
             }
         });
-
-        toggleBackgroundFlash(true);
     }
 
     private void establishLocationManager() {
