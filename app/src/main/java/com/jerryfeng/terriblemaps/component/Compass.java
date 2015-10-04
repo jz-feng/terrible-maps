@@ -41,24 +41,7 @@ public class Compass extends ImageView {
     }
 
     public void setHeading(float degree) {
-        // create a rotation animation (reverse turn degree degrees)
-
-        RotateAnimation ra = new RotateAnimation(
-                mCurrentDegree,
-                -degree+45,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF,
-                0.5f);
-
-        // how long the animation will take place
-        ra.setDuration(210);
-
-        // set the animation after the end of the reservation status
-        ra.setFillAfter(true);
-
-        // Start the animation
-        this.startAnimation(ra);
-        mCurrentDegree = -degree+45;
+        this.setRotation(-degree+45);
     }
 
 }
