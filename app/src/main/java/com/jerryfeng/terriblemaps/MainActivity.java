@@ -108,6 +108,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                intent.putExtra("latitude", mLocation.getLatitude());
+                intent.putExtra("longitude", mLocation.getLongitude());
                 startActivityForResult(intent, REQUEST_MAP_ACTIVITY);
             }
         });
@@ -159,7 +161,9 @@ public class MainActivity extends Activity {
 
         if (requestCode == REQUEST_MAP_ACTIVITY && resultCode == RESULT_OK) {
             mSearchAddress.setText(data.getStringExtra("search_string"));
-            mDestinationCoords = new LatLng(data.getDoubleExtra("latitude", 0f), data.getDoubleExtra("longitude", 0f));
+            mDestinationCoords = new LatLng(data.getDoubleExtra("latitude", 0f),
+                    data.getDoubleExtra("longitude", 0f));
+            Log.d("lat-lng", mDestinationCoords.toString());
         }
     }
 

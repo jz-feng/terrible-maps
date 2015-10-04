@@ -4,9 +4,6 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 
-/**
- * Created by Kevin on 04/10/2015.
- */
 public class MockLocationProvider {
     String providerName;
     Context ctx;

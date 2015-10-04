@@ -29,6 +29,7 @@ public class MapsActivity extends FragmentActivity {
     private EditText mAddressField;
     private Button mSearchButton, mDoneButton;
 
+    private LatLng mCurrentLocation;
     private LatLng mSelectedLocation;
     private String mSearchString;
 
@@ -36,6 +37,10 @@ public class MapsActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        Intent intent = getIntent();
+        mCurrentLocation = new LatLng(intent.getDoubleExtra("latitude", 0f), intent.getDoubleExtra("longitude", 0f));
+
         setUpMapIfNeeded();
 
         final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -125,6 +130,9 @@ public class MapsActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).draggable(true));
+        //mMap.setMyLocationEnabled(true);
+        mMap.clear();
+        mMap.addMarker(new MarkerOptions().position(mCurrentLocation).draggable(true));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentLocation, 13));
     }
 }
