@@ -133,8 +133,13 @@ public class MainActivity extends Activity implements SensorEventListener {
 
                 if (mSteps != null && mSteps.size() > 0) {
                     double dist = distance(location.getLatitude(), location.getLongitude(), mSteps.get(0).getEndLocation().latitude, mSteps.get(0).getEndLocation().longitude, "K");
-                    if (dist < 0.01) {
+                    if (dist < 0.05) {
                         toggleBackgroundFlash(true);
+
+                        if (dist < 0.01 && mSteps.size() > 1) {
+                            toggleBackgroundFlash(false);
+                            mSteps.remove(0);
+                        }
                     }
 
                     mNumSteps.setText(String.valueOf(Math.round(dist) * 2));
@@ -244,7 +249,20 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         mDebugHeading.setText("Heading: " + Float.toString(mNorthDegree) + " degrees");
 
-        mCompass.setHeading(mNorthDegree);
+        float bearingTo = 0;
+
+        if (mSteps != null && mSteps.size() > 1) {
+            double lat = mSteps.get(0).getEndLocation().latitude;
+            double lon = mSteps.get(0).getEndLocation().longitude;
+
+            Location nextLoc = new Location("gmaps");
+            nextLoc.setLatitude(lat);
+            nextLoc.setLongitude(lon);
+
+            bearingTo = mLocation.bearingTo(nextLoc);
+        }
+
+        mCompass.setHeading(mNorthDegree + bearingTo);
     }
 
     @Override
