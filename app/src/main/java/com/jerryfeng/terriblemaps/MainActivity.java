@@ -3,6 +3,10 @@ package com.jerryfeng.terriblemaps;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -12,6 +16,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -22,13 +28,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.LatLng;
+import com.jerryfeng.terriblemaps.component.Compass;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements SensorEventListener {
 
     public static final String serverKey = "AIzaSyAyD0skqAcwz-z1BzwJz8S_6kAFHkBOI40";
     private static final int REQUEST_MAP_ACTIVITY = 10;
@@ -41,8 +48,12 @@ public class MainActivity extends Activity {
     private Location mLocation;
     private LatLng mDestinationCoords;
 
-    private TextView debugLat;
-    private TextView debugLon;
+    private SensorManager mSensorManager;
+
+    private TextView mDebugHeading;
+    private TextView mDebugLat;
+    private TextView mDebugLon;
+    private Compass mCompass;
     private TextView mSearchAddress;
     private Button mMapsButton;
 
@@ -53,6 +64,8 @@ public class MainActivity extends Activity {
 
         initLayout();
         establishLocationManager();
+
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://maps.googleapis.com/maps/api/directions/json?origin=Waterloo&destination=Toronto&key="
@@ -99,8 +112,10 @@ public class MainActivity extends Activity {
     }
 
     private void initLayout() {
-        debugLat = (TextView) findViewById(R.id.debug_lat);
-        debugLon = (TextView) findViewById(R.id.debug_long);
+        mDebugHeading = (TextView) findViewById(R.id.debug_heading);
+        mDebugLat = (TextView) findViewById(R.id.debug_lat);
+        mDebugLon = (TextView) findViewById(R.id.debug_long);
+        mCompass = (Compass) findViewById(R.id.compass);
         mSearchAddress = (TextView) findViewById(R.id.search_address);
         mMapsButton = (Button) findViewById(R.id.maps_button);
 
@@ -125,8 +140,8 @@ public class MainActivity extends Activity {
             @Override
             public void onLocationChanged(Location location) {
                 mLocation = location;
-                debugLat.setText(String.valueOf(location.getLatitude()));
-                debugLon.setText(String.valueOf(location.getLongitude()));
+                mDebugLat.setText(String.valueOf(location.getLatitude()));
+                mDebugLon.setText(String.valueOf(location.getLongitude()));
             }
 
             @Override
@@ -189,5 +204,33 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                SensorManager.SENSOR_DELAY_GAME);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+        // get the angle around the z-axis rotated
+        float degree = Math.round(event.values[0]);
+
+        mDebugHeading.setText("Heading: " + Float.toString(degree) + " degrees");
+
+        mCompass.setHeading(degree);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // not in use
+    }
 
 }
