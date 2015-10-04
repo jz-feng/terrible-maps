@@ -42,6 +42,7 @@ public class MapsActivity extends FragmentActivity {
     private EditText mAddressField;
     private Button mSearchButton, mDoneButton;
 
+    private Marker mMarker;
     private LatLng mCurrentLocation;
     private LatLng mSelectedLocation;
     private String mSearchString;
@@ -73,9 +74,9 @@ public class MapsActivity extends FragmentActivity {
                         LatLng coords = new LatLng(address.getLatitude(), address.getLongitude());
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords, 13));
                         mMap.clear();
-                        Marker selectedMarker = mMap.addMarker(
+                        mMarker = mMap.addMarker(
                                 new MarkerOptions().position(coords).draggable(true));
-                        mSelectedLocation = selectedMarker.getPosition();
+                        mSelectedLocation = mMarker.getPosition();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -87,12 +88,8 @@ public class MapsActivity extends FragmentActivity {
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mSelectedLocation == null) {
-                    Toast.makeText(mContext, "Select a location first ya dingus", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    makeRequest();
-                }
+
+                makeRequest();
             }
         });
     }
@@ -193,9 +190,25 @@ public class MapsActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        //mMap.setMyLocationEnabled(true);
+        mSelectedLocation = mCurrentLocation;
         mMap.clear();
-        mMap.addMarker(new MarkerOptions().position(mCurrentLocation).draggable(true));
+        mMarker = mMap.addMarker(new MarkerOptions().position(mCurrentLocation).draggable(true));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentLocation, 13));
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+                mSelectedLocation = marker.getPosition();
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+
+            }
+        });
     }
 }
