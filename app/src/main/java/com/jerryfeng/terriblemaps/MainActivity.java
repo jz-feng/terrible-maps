@@ -141,10 +141,10 @@ public class MainActivity extends Activity implements SensorEventListener {
 
                     double dist = location.distanceTo(nextLoc);
 
-                    if (dist < 0.05) {
+                    if (dist < 50) {
                         toggleBackgroundFlash(true);
 
-                        if (dist < 0.01 && mSteps.size() > 1) {
+                        if (dist < 10 && mSteps.size() > 1) {
                             toggleBackgroundFlash(false);
                             mSteps.remove(0);
                         }
