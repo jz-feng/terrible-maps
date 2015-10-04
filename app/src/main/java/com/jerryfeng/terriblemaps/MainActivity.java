@@ -12,6 +12,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -33,7 +35,6 @@ import com.jerryfeng.terriblemaps.component.Compass;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 public class MainActivity extends Activity implements SensorEventListener {
 
@@ -53,9 +54,15 @@ public class MainActivity extends Activity implements SensorEventListener {
     private TextView mDebugHeading;
     private TextView mDebugLat;
     private TextView mDebugLon;
+
     private Compass mCompass;
+
     private TextView mSearchAddress;
     private Button mMapsButton;
+
+    private RelativeLayout root;
+    private int backgroundFlashIndex = 0;
+    private boolean isBackgroundFlashing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +125,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         mCompass = (Compass) findViewById(R.id.compass);
         mSearchAddress = (TextView) findViewById(R.id.search_address);
         mMapsButton = (Button) findViewById(R.id.maps_button);
+        root = (RelativeLayout) findViewById(R.id.root_background);
 
         mMapsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,6 +136,8 @@ public class MainActivity extends Activity implements SensorEventListener {
                 startActivityForResult(intent, REQUEST_MAP_ACTIVITY);
             }
         });
+
+        toggleBackgroundFlash(true);
     }
 
     private void establishLocationManager() {
@@ -231,6 +241,35 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // not in use
+    }
+
+    private void toggleBackgroundFlash(boolean flash) {
+        if (flash) {
+            if (!isBackgroundFlashing) {
+                isBackgroundFlashing = true;
+                final Handler handler = new Handler();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (backgroundFlashIndex == 0) {
+                            root.setBackgroundResource(R.drawable.background_buzz_1);
+                            backgroundFlashIndex++;
+                        } else {
+                            root.setBackgroundResource(R.drawable.background_buzz_3);
+                            backgroundFlashIndex = 0;
+                        }
+
+                        if (isBackgroundFlashing) {
+                            handler.postDelayed(this, 500);
+                        } else {
+                            root.setBackgroundResource(R.drawable.background);
+                        }
+                    }
+                });
+            }
+        } else {
+            isBackgroundFlashing = false;
+        }
     }
 
 }
