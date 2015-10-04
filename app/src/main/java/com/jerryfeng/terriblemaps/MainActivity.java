@@ -55,6 +55,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     private TextView mDebugLat;
     private TextView mDebugLon;
     private TextView mNumSteps;
+    private TextView mTotalSteps;
 
     private Compass mCompass;
 
@@ -69,6 +70,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     private float mNorthDegree;
     private double mockLat = 43.473073;
     private double mockLng = -80.543648;
+    private float totalSteps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +92,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         mDebugLon = (TextView) findViewById(R.id.debug_long);
         mCompass = (Compass) findViewById(R.id.compass);
         mNumSteps = (TextView) findViewById(R.id.steps);
+        mTotalSteps = (TextView) findViewById(R.id.total_steps);
         mSearchAddress = (TextView) findViewById(R.id.search_address);
         mMapsButton = (Button) findViewById(R.id.maps_button);
         root = (RelativeLayout) findViewById(R.id.root_background);
@@ -151,6 +154,13 @@ public class MainActivity extends Activity implements SensorEventListener {
                     }
 
                     mNumSteps.setText(String.valueOf(Math.round(dist) * 2));
+
+                    totalSteps = 0;
+                    for (Step step : mSteps) {
+                        totalSteps += step.getDistance() * 2;
+                    }
+
+                    mTotalSteps.setText(String.valueOf(Math.round(totalSteps)));
                 }
             }
 
