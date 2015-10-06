@@ -7,3 +7,5 @@ Terrible Maps helps the user get from their current location to a destination of
 Need to get around campus? No problem. Follow the the glorious chicken leg and count down your steps. Want to go to the GTA? Better start walking now, you've got a long way to go. But worry not, you'll get there eventually.
 
 Terrible Maps utilizes the Google Maps API for Android. It currently only works on a limited number of devices due to Google Maps API's credential restrictions.
+
+Note: the code in the repo currently uses mock locations services; mock locations must be allowed in developer options
