@@ -19,7 +19,8 @@
         <com.jerryfeng.terriblemaps.component.Signpost
             android:id="@+id/sign_post"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" />
 
         <TextView
             android:id="@+id/steps"
@@ -30,6 +31,14 @@
             android:textSize="24sp"
             android:textColor="#FFFFFF"
             android:text="2000"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Until next checkpoint"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/steps"
+            android:textColor="#fff" />
     </RelativeLayout>
 
     <com.jerryfeng.terriblemaps.component.Compass
@@ -70,7 +79,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SWAG"
+        android:text="Choose Destination"
         android:id="@+id/maps_button"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
@@ -92,5 +101,12 @@
         android:layout_below="@+id/search_address"
         android:layout_centerHorizontal="true"
         android:textSize="24dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Until destination"
+        android:layout_below="@+id/total_steps"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

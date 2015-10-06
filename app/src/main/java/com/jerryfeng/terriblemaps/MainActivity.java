@@ -153,14 +153,14 @@ public class MainActivity extends Activity implements SensorEventListener {
                         }
                     }
 
-                    mNumSteps.setText(String.valueOf(Math.round(dist) * 2));
+                    mNumSteps.setText(String.valueOf(Math.round(dist) * 2) + " steps");
 
                     totalSteps = 0;
                     for (Step step : mSteps) {
                         totalSteps += step.getDistance() * 2;
                     }
 
-                    mTotalSteps.setText(String.valueOf(Math.round(totalSteps)));
+                    mTotalSteps.setText(String.valueOf(Math.round(totalSteps)) + " steps");
                 }
             }
 
